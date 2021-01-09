@@ -1,3 +1,7 @@
+# nupub
+
+> Bootstrapped with FireFly.
+
 A modern web-app boilerplate with Create React App and Firebase. Focused on simplicity for new devs, rapid prototyping, and smallish projects.
 
 ### **Full documentation at [getfirefly.org](http://getfirefly.org)**
