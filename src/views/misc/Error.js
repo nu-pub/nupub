@@ -1,17 +1,14 @@
 // a generic error page to show whenever something goes wrong in other views
 
 import React from 'react'
-
-import {
-  InternalLink,
-} from '../../styles/links'
+import {Link} from 'react-router-dom'
 
 const Error = ({error}) => (
   <div>
     <h1>Whoops</h1>
     <p>{`Sorry, something went wrong. We're looking into it.`}</p>
     <div style={{fontFamily: 'monospace'}}>{error ? error.message : null}</div>
-    <InternalLink to="/">Go to the homepage</InternalLink>
+    <Link to="/">Go to the homepage</Link>
   </div>
 )
 
