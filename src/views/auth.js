@@ -69,8 +69,6 @@ const Auth = (props) => {
     </Dialog>
   );
 
-  console.log(open)
-
   return (
     <div className="authContainer">
       {!isSignedIn ? (
