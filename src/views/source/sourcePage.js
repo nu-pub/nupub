@@ -4,6 +4,7 @@ import Box from "@material-ui/core/Box";
 import { useDocument, useCollection } from "react-firebase-hooks/firestore";
 import Paragraph from "../components/Paragraph";
 import useDoubleClick from "use-double-click";
+import styled from "styled-components";
 
 const COLLECTION = "sources";
 
@@ -25,17 +26,33 @@ const useDocumentAndCollection = (id) => {
   );
 
   return [
-    { doc: docValue, collection: value },
+    { document: docValue, collection: value },
     docLoading || loading,
     docError || error,
   ];
 };
 
-const SourceParagraph = ({ doc, setFocused, focused }) => {
+const SourceBlockContainer = styled(Box)`
+  transition-duration: 0.1s;
+  transition-timing-function: ease-out;
+  transform: ${(props) => {
+    if (props.focused == null) {
+      return 0;
+    } else if (props.focused) {
+      return "translate(50px)";
+    } else {
+      return 0;
+    }
+  }};
+`;
+
+const SourceParagraph = ({ doc, setFocused, focused, handleConnect }) => {
   const boxRef = useRef();
 
   useDoubleClick({
-    // onSingleClick: (e) => {},
+    onSingleClick: (e) => {
+      setFocused(null);
+    },
     onDoubleClick: (e) => {
       setFocused(e.target.id);
     },
@@ -43,23 +60,45 @@ const SourceParagraph = ({ doc, setFocused, focused }) => {
     latency: 250,
   });
 
+  const f = focused == undefined ? focused : focused === doc.docid;
+
   return (
-    <Box ref={boxRef}>
-      {doc.body.length > LENGTH_THRESHOLD && (
-        <Paragraph id={doc.docid}>{doc.body}</Paragraph>
+    <SourceBlockContainer focused={f}>
+      <Paragraph id={doc.docid} focused={f} ref={boxRef}>
+        {doc.body}
+      </Paragraph>
+      {!!f && (
+        <Box>
+          <h3>Connected To:</h3>
+          <pre>id: {doc.docid}</pre>
+          <button onClick={handleConnect} id={doc.docid}>
+            Connect ➡️
+          </button>
+        </Box>
       )}
-    </Box>
+    </SourceBlockContainer>
   );
+};
+
+const useSearch = (search) => {
+  return new URLSearchParams(search);
 };
 
 const SourcePage = ({
   match: {
     params: { sourceId },
   },
+  location,
 }) => {
-  console.log(sourceId);
+  const qs = useSearch(location.search);
+  const DEBUG = !!qs.get("debug");
+
   const [value, loading, error] = useDocumentAndCollection(sourceId);
-  const [focused, setFocused] = useState();
+  const [focused, setFocused] = useState(null);
+
+  const handleConnect = (e) => {
+    alert(`block_id: ${e.target.id}`);
+  };
 
   if (error) {
     // TODO: REPLACE STYLE
@@ -76,12 +115,20 @@ const SourcePage = ({
 
   return (
     <Box maxWidth="630px">
-      <pre>{`focused: ${focused || "n/a"}`}</pre>
-      <h1>{value.doc.data().title}</h1>
-      <h2>{value.doc.data().creator}</h2>
-      {data.map((doc) => (
-        <SourceParagraph doc={doc} focused={focused} setFocused={setFocused} />
-      ))}
+      {DEBUG && <pre>{`focused: ${focused || "n/a"}`}</pre>}
+      <h1>{value.document.data().title}</h1>
+      <h2>{value.document.data().creator}</h2>
+      {data
+        // get rid of super short paragraphs
+        .filter((doc) => doc.body.length > LENGTH_THRESHOLD)
+        .map((doc) => (
+          <SourceParagraph
+            doc={doc}
+            focused={focused}
+            setFocused={setFocused}
+            handleConnect={handleConnect}
+          />
+        ))}
     </Box>
   );
 };
