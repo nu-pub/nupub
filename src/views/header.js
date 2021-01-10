@@ -31,7 +31,6 @@ const Header = () => {
       <Helmet defaultTitle="nupub" titleTemplate="%s | nupub">
         <title>nupub</title>
       </Helmet>
-      {!loading && !error && user && (
         <Box display="flex" flexDirection="row" justifyContent="space-between">
           <Box>
             <Link
@@ -50,7 +49,6 @@ const Header = () => {
             <Auth />
           </Box>
         </Box>
-      )}
     </HeaderContainer>
   );
 };
