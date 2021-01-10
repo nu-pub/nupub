@@ -13,17 +13,15 @@ const HeaderContainer = styled.header``;
 const Header = () => {
   const [user, loading, error] = useAuthState(firebase.auth());
 
+  const userCrumbs = "";
+
   return (
     <HeaderContainer>
       <Helmet defaultTitle="nupub" titleTemplate="%s | nupub">
         <title>nupub</title>
       </Helmet>
       <Box display="flex" flexDirection="row" justifyContent="space-between">
-        <Box>
-          <div className="profileButton">
-            {user && <Link to={"/user/" + user.uid}>Profile</Link>}
-          </div>
-        </Box>
+        <Box>{userCrumbs}</Box>
         <Box>
           <Auth />
         </Box>
