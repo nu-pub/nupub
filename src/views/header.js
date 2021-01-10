@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
+import '../css/header.css'
+import Auth from './auth'
 
 const Header = () => {
     return(
-        <div>
+        <div className="headerBar">
             header
+            <Auth/>
         </div>
     )
 }
