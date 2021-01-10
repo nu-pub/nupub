@@ -4,8 +4,9 @@
   "description": "maint scripts to help developers work with data in firefly apps",
   "main": "index.js",
   "dependencies": {
-    "bluebird": "^3.5.1",
-    "chalk": "^2.3.2",
-    "firebase-admin": "^5.11.0"
+    "bluebird": "^3.7.2",
+    "chalk": "^4.1.0",
+    "firebase-admin": "^9.4.2",
+    "node-fetch": "^2.6.1"
   }
 }
