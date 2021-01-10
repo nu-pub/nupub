@@ -12,8 +12,8 @@ const BlockCard = (props) => {
 
     return(
         <div className="channelCard">
-            <Link to={`/block/${props.blockId}`}>
-                {blockTitle}
+            <Link to={`/block/${props.id}`}>
+                {props.source}
             </Link>
         </div>
     )

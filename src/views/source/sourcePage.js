@@ -42,7 +42,7 @@ const useDocumentAndCollection = (id) => {
 
 const AddToChannelContainer = styled(Box)``;
 
-const AddToChannel = ({ path }) => {
+const AddToChannel = ({ path, sourceID }) => {
   const [channelId, setChannelId] = React.useState("");
   const [user, loading, error] = useAuthState(Firebase.auth());
 
@@ -73,7 +73,9 @@ const AddToChannel = ({ path }) => {
         .doc(channelId)
         .collection("blocks")
         .doc(path.replace(/\//gi, "-"))
-        .set({}),
+        .set({
+          source: sourceID
+        }),
       Firebase.firestore()
         .doc(path)
         .update({
@@ -152,7 +154,7 @@ const SourceParagraph = ({ doc, setFocused, focused, handleConnect, path }) => {
             Connect ➡️
           </button> */}
           <Box>
-            <AddToChannel path={`sources/${path}/body/${doc.docid}`} />
+            <AddToChannel path={`sources/${path}/body/${doc.docid}`} sourceID={path} />
           </Box>
         </Box>
       )}

@@ -3,6 +3,7 @@ import firebase from 'firebase'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { set } from 'react-ga'
 import { Link } from 'react-router-dom'
+import BlockCard from './blockCard'
 
 const ChannelPage = (props) => {
 
@@ -31,11 +32,16 @@ const ChannelPage = (props) => {
             })
 
             db.collection(`channels/${props.match.params.channelId}/blocks`).get().then(function(querySnapshot){
-                var tempArray = []
+                var sourceArray = []
                 querySnapshot.forEach(element => {
-                    tempArray.push(element.data())
+                    sourceArray.push({
+                        source: element.data().source,
+                        path: element.id
+                    }
+                    )
                 });
-                setBlockList(tempArray)
+                console.log(sourceArray)
+                setBlockList(sourceArray)
             }).catch(function(error) {
                 console.log(error)
             })
@@ -46,7 +52,7 @@ const ChannelPage = (props) => {
 
     var channelsDisplay = blockList.map((block, index) => {
         return (
-            <BlockCard db={db} title={block.title} blockId={block.id} key={index}/>
+            <BlockCard db={db} id={block.path} source={block.source} key={index}/>
         )
     }
 )
@@ -56,8 +62,8 @@ const ChannelPage = (props) => {
                 <Link to={`/user/${ownerId}`}>{ownerName}</Link>
                 {props.title}
             </div>
-            <div>
-                Block list
+            <div className="blockList">
+                {channelsDisplay}
             </div>
         </div>
     )
