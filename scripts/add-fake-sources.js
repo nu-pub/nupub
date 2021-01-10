@@ -13,10 +13,14 @@ const main = async () => {
   const data = await response.json();
   console.log(`${data.content} —${data.author}`);
 
-  await db.collection("sources").add({
+  const ref = await db.collection("sources").add({
     creator: data.author,
-    body: [data.content],
     title: data.content,
+  });
+
+  await db.collection("sources").doc(ref.id).collection("body").add({
+    body: data.content,
+    index: 1,
   });
 };
 
