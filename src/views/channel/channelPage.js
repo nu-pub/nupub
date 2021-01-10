@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 
-const ChannelPage = () => {
+const ChannelPage = (props) => {
     return(
         <div>
-            channel page
+            {props.match.params.channelId}
         </div>
     )
 }
