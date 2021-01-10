@@ -12,7 +12,7 @@ const ChannelCard = (props) => {
     })
 
     return(
-        <div>
+        <div className="channelCard">
             <Link to={`/channel/${props.channelId}`}>
                 {channelTitle}
             </Link>
