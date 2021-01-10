@@ -6,6 +6,7 @@
   "dependencies": {
     "bluebird": "^3.7.2",
     "chalk": "^4.1.0",
+    "cheerio": "^1.0.0-rc.5",
     "firebase-admin": "^9.4.2",
     "node-fetch": "^2.6.1"
   }
