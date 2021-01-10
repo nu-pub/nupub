@@ -2,6 +2,7 @@ import React from "react";
 import Firebase from "firebase/app";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { Helmet } from "react-helmet";
+import SourceBody from "./sourceBody";
 
 const COLLECTION = "sources";
 
@@ -29,6 +30,7 @@ const SourcePage = ({
               title={`${value.data().sourceTitle} by ${value.data().creator}`}
             />
             <span>Document: {JSON.stringify(value.data())}</span>
+            <SourceBody id={sourceId} />
           </div>
         )}
       </p>
