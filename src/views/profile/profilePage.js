@@ -2,76 +2,77 @@ import React, { useEffect, useState } from 'react'
 import firebase from 'firebase'
 import ChannelCard from './channelCard'
 import {Button, TextField} from '@material-ui/core'
+import { useAuthState } from 'react-firebase-hooks/auth'
+
+
 
 const ProfilePage = (props) => {
 
 
     const db = firebase.firestore()
-    const user = firebase.auth()
 
     const [channelList, setChannelList] = useState([])
     const [blockList, setBlockList] = useState([])
     const [channelInput, setChannelInput] = useState("")
     const [updated, setUpdated] = useState(false)
+    const [user, loading, error] = useAuthState(firebase.auth())
 
     useEffect(() => {
-        
-        db.collection(`users`).doc(user.uid).get().then(function(doc) {
+        if (user) {
+            db.collection(`users/${user.uid}/channels`).get().then(function(querySnapshot) {
+                var tempArray = []
+            
+                querySnapshot.forEach(element => {
+                    tempArray.push(element.data())
+                });
 
-            if(doc.data().channels!=undefined) {
-                setChannelList(doc.data().channels)
-            } else {
+                console.log(tempArray)
+                setChannelList(tempArray)
+    
+            }).catch(function(error) {
+                console.log(error)
                 setChannelList([])
-            }
-
-            if(doc.data().blocks!=undefined) {
-                setBlockList(doc.data().channels)
-            } else {
-                setBlockList([])
-            }
-
-        }).catch(function(error) {
-            console.log(error)
-            setChannelList([])
-        })
-
-        db.collection(`channels`)
-    }, [updated])
+            })
+        }
+        //db.collection(`channels`)
+    }, [updated, user])
 
     const handleAdd = () => {
-
+        var copyList = [...channelList]
         db.collection('channels').add({
             datetime: new Date(),
-            owner: firebase.auth().currentUser.uid,
+            owner: user.uid,
             title: channelInput,
         }).then(function(docRef) {
-
-            // db.collection('users').doc(user.uid).get(function(doc){
-            //     if (doc.data().channels==undefined) {
-            //         console.log("creating channels")
-            //         db.collection('users').doc(user.uid).add({
-            //             channels: [docRef.id]
-            //         }, {merge: true})
-            //     } else {
-            //         console.log("updating channels")
-            //         db.collection(`users`).doc(user.uid).update({
-            //             channels: firebase.firestore.FieldValue.arrayUnion(docRef.id)
-            //         }, {merge: true}).then(function(){
-            //             setUpdated(!updated)
-            //         }) 
-            //     }
-            // })
+            db.collection(`users/${user.uid}/channels`).add({
+                id: docRef.id,
+                position: channelList.length,
+                title: channelInput,
+                datetime: new Date()
+            })
             
+            copyList.push({
+                id: docRef.id,
+                position: channelList.length,
+                title: channelInput,
+                datetime: new Date()
+            })
+
+            setChannelList(copyList)
+
         }).catch(function(error){
             console.log(error)
         })
-
         setChannelInput("")
     }
 
-    const channelsDisplay = channelList.map((channel) => {
+    // var sortedList = channelList.sort(function(a, b) {
+    //     return b.position - a.position
+    // })
+
+    var channelsDisplay = channelList.map((channel, index) => {
             return (
-                <ChannelCard db={db} id={channel} key={channel}/>
+                <ChannelCard db={db} title={channel.title} channelId={channel.id} key={index}/>
             )
         }
     )
@@ -92,13 +93,18 @@ const ProfilePage = (props) => {
 
     return(
         <div className="profilePage">
-            <div className="topSection">
-                {user.uid}
-                {addChannelArea}
-            </div>
-            <div className="listSection">
-                {channelsDisplay}
-            </div>
+            {!loading && (
+                <div>
+                    <div className="topSection">
+                    {user.uid}
+                    {addChannelArea}
+                    </div>
+                    <div className="listSection">
+                        {channelsDisplay}
+                    </div>
+                </div>
+            )}
+            
         </div>
     )
 }

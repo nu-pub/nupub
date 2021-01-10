@@ -42,12 +42,11 @@ const Auth = (props) => {
         setIsSignedIn(!!user);
         setOpen(false);
         if (user) {
-          const db = firebase.firestore();
-          db.collection("users").doc(user.uid).set({
-            name: user.displayName,
-            email: user.email,
-          }),
-            { merge: true };
+            const db = firebase.firestore();
+            db.collection("users").doc(user.uid).set({
+                name: user.displayName,
+                email: user.email,
+            }, { merge: true })
         }
       });
   });
