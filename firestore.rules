@@ -23,6 +23,11 @@ service cloud.firestore {
     match /channels/{channelId} {
     	allow read, write, create: if
   			request.time < timestamp.date(2021, 2, 8);
+
+      match /blocks/{blockId} {
+        allow read, write, create: if
+          request.time < timestamp.date(2021,2 8);
+      }
     }
     
     match /blocks/{blockId} {
