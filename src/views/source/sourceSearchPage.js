@@ -1,30 +1,36 @@
-import React, { useEffect, useState } from 'react'
-import firebase from 'firebase'
+import React, { useEffect } from "react";
+import Firebase from "firebase";
+import { useDocument, useCollection } from "react-firebase-hooks/firestore";
+import SourceSearchCard from "./sourceCard";
 
 const SourceSearchPage = () => {
+  const [value, loading, error] = useCollection(
+    Firebase.firestore().collection(`sources`),
+    {
+      snapshotListenOptions: { includeMetadataChanges: false },
+    }
+  );
 
-    const db = firebase.firestore()
+  if (loading || error) {
+    return null;
+  }
 
-    useEffect(() => {
-        db.collection('sources').get(function(querySelector) {
-            const tempArray = []
-            querySelector.forEach(element => {
-                tempArray.push(element.data())
-            });
-        })
-    })
+  const sources = value.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
 
+  return (
+    <div className="sourceSearchPage">
+      <div className="sourceTop">top</div>
+      <div className="sourceList">
+        {sources.map((e) => (
+          <SourceSearchCard
+            title={e.title}
+            creator={e.creator}
+            sourceId={e.id}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
 
-    return(
-        <div className="sourceSearchPage">
-            <div className="sourceTop">
-                top
-            </div>
-            <div className="sourceList">
-                
-            </div>
-        </div>
-    )
-}
-
-export default SourceSearchPage
+export default SourceSearchPage;
