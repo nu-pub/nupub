@@ -1,10 +1,18 @@
 import React, { useState, useRef } from "react";
 import Firebase from "firebase/app";
+import Helmet from "react-helmet";
 import Box from "@material-ui/core/Box";
 import { useDocument, useCollection } from "react-firebase-hooks/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 import Paragraph from "../components/Paragraph";
 import useDoubleClick from "use-double-click";
 import styled from "styled-components";
+import InputLabel from "@material-ui/core/InputLabel";
+import Button from "@material-ui/core/Button";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
 
 const COLLECTION = "sources";
 
@@ -32,6 +40,75 @@ const useDocumentAndCollection = (id) => {
   ];
 };
 
+const AddToChannelContainer = styled(Box)``;
+
+const AddToChannel = ({ path }) => {
+  const [channelId, setChannelId] = React.useState("");
+  const [user, loading, error] = useAuthState(Firebase.auth());
+
+  const handleChange = (event) => {
+    setChannelId(event.target.value);
+  };
+
+  if (loading || error) {
+    return null;
+  }
+
+  const [channel, channelLoading, channelError] = useCollection(
+    Firebase.firestore().collection(`users/${user.uid}/channels`),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  if (channelLoading || channelError) return null;
+
+  const channels = channel.docs.map((doc) => doc.data());
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await Promise.all([
+      Firebase.firestore()
+        .collection("channels")
+        .doc(channelId)
+        .collection("blocks")
+        .doc(path.replace(/\//gi, "-"))
+        .set({}),
+      Firebase.firestore()
+        .doc(path)
+        .update({
+          channels: Firebase.firestore.FieldValue.arrayUnion(channelId),
+        }),
+    ]);
+  };
+
+  return (
+    user && (
+      <AddToChannelContainer>
+        <h4>Add to channel:</h4>
+        <form onSubmit={handleSubmit}>
+          <FormControl>
+            <InputLabel id="demo-simple-select-label">Channel</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={channelId}
+              onChange={handleChange}
+            >
+              {channels.map((c) => (
+                <MenuItem value={c.id}>{c.title}</MenuItem>
+              ))}
+            </Select>
+            <Button type="submit" variant="contained" value="submit">
+              Add to channel
+            </Button>
+          </FormControl>
+        </form>
+      </AddToChannelContainer>
+    )
+  );
+};
+
 const SourceBlockContainer = styled(Box)`
   transition-duration: 0.1s;
   transition-timing-function: ease-out;
@@ -46,7 +123,7 @@ const SourceBlockContainer = styled(Box)`
   }};
 `;
 
-const SourceParagraph = ({ doc, setFocused, focused, handleConnect }) => {
+const SourceParagraph = ({ doc, setFocused, focused, handleConnect, path }) => {
   const boxRef = useRef();
 
   useDoubleClick({
@@ -71,9 +148,12 @@ const SourceParagraph = ({ doc, setFocused, focused, handleConnect }) => {
         <Box>
           <h3>Connected To:</h3>
           <pre>id: {doc.docid}</pre>
-          <button onClick={handleConnect} id={doc.docid}>
+          {/* <button onClick={handleConnect} id={doc.docid}>
             Connect ➡️
-          </button>
+          </button> */}
+          <Box>
+            <AddToChannel path={`sources/${path}/body/${doc.docid}`} />
+          </Box>
         </Box>
       )}
     </SourceBlockContainer>
@@ -127,6 +207,7 @@ const SourcePage = ({
             focused={focused}
             setFocused={setFocused}
             handleConnect={handleConnect}
+            path={sourceId}
           />
         ))}
     </Box>
