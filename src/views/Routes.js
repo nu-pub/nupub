@@ -21,6 +21,8 @@ const Routes = (props) => (
     <Route path="/channel/:channelId" component={ChannelPage} />
     <Route path="/block/:blockId" component={BlockPage} />
     <Route path="/source/:sourceId" component={SourcePage} />
+    {/* where cid is content id */}
+    <Route path="/source/:sourceId/:cid" component={SourcePage} />
     {/* TODO: remove before deploy */}
     <Route path="/_/style" component={StylePage} />
     <Route component={Error} />

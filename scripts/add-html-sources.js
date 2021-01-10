@@ -11,7 +11,7 @@ admin.initializeApp({
 const db = require("firebase-admin").firestore();
 
 const main = async () => {
-  const f = await fs.readFile("./data/carey.html");
+  const f = await fs.readFile("./data/stick.html");
   const $ = cheerio.load(f);
   const paragraphs = $("p").map((i, e) => {
     return { body: $(e).text(), index: i };
@@ -19,7 +19,7 @@ const main = async () => {
 
   const ref = await db.collection("sources").add({
     creator: "HTML",
-    title: "carey",
+    title: "stick",
   });
 
   await Promise.all(
