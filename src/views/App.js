@@ -5,19 +5,23 @@ import { BrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./misc/ErrorBoundary";
 import Routes from "./Routes";
 import Header from "./header";
-import { Box, Container } from "@material-ui/core";
+import { Container } from "@material-ui/core";
+
+const UserCrumbContext = React.createContext([]);
 
 const App = () => {
   return (
     <FirestoreProvider firebase={Firebase}>
       <BrowserRouter>
         <ErrorBoundary>
-          <Container>
-            <Header />
-            <Container fixed maxWidth="sm">
-              <Routes />
+          <UserCrumbContext.Provider>
+            <Container>
+              <Header />
+              <Container fixed maxWidth="sm">
+                <Routes />
+              </Container>
             </Container>
-          </Container>
+          </UserCrumbContext.Provider>
         </ErrorBoundary>
       </BrowserRouter>
     </FirestoreProvider>
