@@ -15,6 +15,12 @@ const ProfileLink = styled.span`
   color: black;
 `;
 
+const Title = styled.span`
+  font-family: "Quicksand", sans-serif;
+  font-size: 2em;
+  color: black;
+`;
+
 const HeaderContainer = styled.header``;
 
 const Header = () => {
@@ -33,6 +39,11 @@ const Header = () => {
               style={{ textDecoration: "none" }}
             >
               <ProfileLink>{user ? user.displayName : ""}</ProfileLink>
+            </Link>
+          </Box>
+          <Box>
+            <Link to={"/"} style={{ textDecoration: "none" }}>
+              <Title>nupub</Title>
             </Link>
           </Box>
           <Box>
