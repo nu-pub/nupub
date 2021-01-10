@@ -13,8 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import {Link} from "react-router-dom"
-import ChannelLink from './channelLink'
+import { Link } from "react-router-dom";
+import ChannelLink from "./channelLink";
 
 const COLLECTION = "sources";
 
@@ -42,6 +42,12 @@ const useDocumentAndCollection = (id) => {
   ];
 };
 
+const StyledParagraph = styled(Paragraph)`
+  &:hover {
+    color: ${(props) => (props.focused ? "black" : "gray")};
+  }
+`;
+
 const AddToChannelLabel = styled.span`
   font-weight: bold;
 `;
@@ -55,11 +61,11 @@ const AddToChannelContainer = styled(Box)`
 const AddToChannel = ({ path, sourceID, paragraphID }) => {
   const [channelId, setChannelId] = React.useState("");
   const [user, loading, error] = useAuthState(Firebase.auth());
-  const [channelList, setChannelList] = useState([])
-  const [recentChannel, setRecentChannel] = useState("")
-  const [recentId, setRecentId] = useState("")
+  const [channelList, setChannelList] = useState([]);
+  const [recentChannel, setRecentChannel] = useState("");
+  const [recentId, setRecentId] = useState("");
 
-  const db = Firebase.firestore()
+  const db = Firebase.firestore();
 
   const handleChange = (event) => {
     setChannelId(event.target.value);
@@ -94,25 +100,19 @@ const AddToChannel = ({ path, sourceID, paragraphID }) => {
         .doc(sourceID)
         .collection("paragraphs")
         .doc(paragraphID)
-        .collection("channels").add({
-          channel: channelId
+        .collection("channels")
+        .add({
+          channel: channelId,
         }),
-      db
-        .doc(path)
-        .update({
-          channels: Firebase.firestore.FieldValue.arrayUnion(channelId),
-        }),
-    ]).then(function() {
-      setRecentId(channelId)
+      db.doc(path).update({
+        channels: Firebase.firestore.FieldValue.arrayUnion(channelId),
+      }),
+    ]).then(function () {
+      setRecentId(channelId);
     });
-
   };
 
-  const displayRecent = (
-    <Link to={`/channel/${recentId}`}>
-      {recentId}
-    </Link>
-  )
+  const displayRecent = <Link to={`/channel/${recentId}`}>{recentId}</Link>;
 
   return (
     user && (
@@ -134,9 +134,7 @@ const AddToChannel = ({ path, sourceID, paragraphID }) => {
             <Button type="submit" variant="contained" value="submit">
               Add to channel
             </Button>
-            <div className="belongsTo">
-              {displayRecent}
-            </div>
+            <div className="belongsTo">{displayRecent}</div>
           </FormControl>
         </form>
       </AddToChannelContainer>
@@ -182,13 +180,17 @@ export const SourceParagraph = ({
 
   return (
     <SourceBlockContainer focused={f}>
-      <Paragraph id={doc.docid} focused={f} ref={boxRef}>
+      <StyledParagraph id={doc.docid} focused={f} ref={boxRef}>
         {doc.body}
-      </Paragraph>
+      </StyledParagraph>
       {!!f && (
         <Box>
           <Box>
-            <AddToChannel path={`sources/${path}/body/${doc.docid}`} paragraphID={doc.docid} sourceID={path} />
+            <AddToChannel
+              path={`sources/${path}/body/${doc.docid}`}
+              paragraphID={doc.docid}
+              sourceID={path}
+            />
           </Box>
         </Box>
       )}
