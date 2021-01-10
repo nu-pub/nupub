@@ -1,6 +1,7 @@
 import React from "react";
 import Firebase from "firebase/app";
 import { useDocument } from "react-firebase-hooks/firestore";
+import { Helmet } from "react-helmet";
 
 const COLLECTION = "sources";
 
@@ -22,7 +23,14 @@ const SourcePage = ({
       <p>
         {error && <strong>Error: {JSON.stringify(error)}</strong>}
         {loading && <span>Document: Loading...</span>}
-        {value && <span>Document: {JSON.stringify(value.data())}</span>}
+        {value && (
+          <div>
+            <Helmet
+              title={`${value.data().sourceTitle} by ${value.data().creator}`}
+            />
+            <span>Document: {JSON.stringify(value.data())}</span>
+          </div>
+        )}
       </p>
     </div>
   );

@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
-import '../css/header.css'
-import Auth from './auth'
+import React, { useState } from "react";
+import { Helmet } from "react-helmet";
+import Auth from "./auth";
 
 const Header = () => {
-    return(
-        <div className="headerBar">
-            header
-            <Auth/>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Helmet defaultTitle="nupub" titleTemplate="%s | nupub">
+        <title>nupub</title>
+      </Helmet>
+      <Auth />
+    </div>
+  );
+};
 
-export default Header
+export default Header;
