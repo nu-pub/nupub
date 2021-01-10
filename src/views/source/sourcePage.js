@@ -42,7 +42,15 @@ const useDocumentAndCollection = (id) => {
   ];
 };
 
-const AddToChannelContainer = styled(Box)``;
+const AddToChannelLabel = styled.span`
+  font-weight: bold;
+`;
+
+const AddToChannelContainer = styled(Box)`
+  font-family: "Quicksand", sans-serif;
+  display: flex;
+  justify-content: space-between;
+`;
 
 const AddToChannel = ({ path, sourceID, paragraphID }) => {
   const [channelId, setChannelId] = React.useState("");
@@ -109,7 +117,7 @@ const AddToChannel = ({ path, sourceID, paragraphID }) => {
   return (
     user && (
       <AddToChannelContainer>
-        <h4>Add to channel:</h4>
+        <AddToChannelLabel>Add to Channel:</AddToChannelLabel>
         <form onSubmit={handleSubmit}>
           <FormControl>
             <InputLabel id="demo-simple-select-label">Channel</InputLabel>
@@ -179,11 +187,6 @@ export const SourceParagraph = ({
       </Paragraph>
       {!!f && (
         <Box>
-          <h3>Connected To:</h3>
-          <pre>id: {doc.docid}</pre>
-          {/* <button onClick={handleConnect} id={doc.docid}>
-            Connect ➡️
-          </button> */}
           <Box>
             <AddToChannel path={`sources/${path}/body/${doc.docid}`} paragraphID={doc.docid} sourceID={path} />
           </Box>

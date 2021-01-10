@@ -19,7 +19,6 @@ const SourceSearchPage = () => {
 
   return (
     <div className="sourceSearchPage">
-      <div className="sourceTop">top</div>
       <div className="sourceList">
         {sources.map((e) => (
           <SourceSearchCard
