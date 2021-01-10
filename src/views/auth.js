@@ -17,7 +17,7 @@ const uiConfig = {
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
   ],
-  callback: {
+  callbacks: {
     signinSuccessWithAuthResult: () => false,
   },
 };
@@ -27,18 +27,7 @@ const Auth = (props) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const unregisterAuthObserver = firebase
-      .auth()
-      .onAuthStateChanged((user) => {
-        setIsSignedIn(!!user);
-        setOpen(false);
-      });
-  });
-
-  useEffect(() => {
-    const unregisterAuthObserver = firebase
-      .auth()
-      .onAuthStateChanged((user) => {
+    const unregisterAuthObserver = firebase.auth().onAuthStateChanged((user) => {
         setIsSignedIn(!!user);
         setOpen(false);
         if (user) {
@@ -46,10 +35,13 @@ const Auth = (props) => {
             db.collection("users").doc(user.uid).set({
                 name: user.displayName,
                 email: user.email,
-            }, { merge: true })
+            }, { merge: true }).catch(function(error){
+                console.log(error)
+            })
         }
       });
-  });
+      return () => unregisterAuthObserver();
+  }, []);
 
   const signinDialog = (
     <Dialog
@@ -76,6 +68,8 @@ const Auth = (props) => {
       </DialogActions>
     </Dialog>
   );
+
+  console.log(open)
 
   return (
     <div className="authContainer">
