@@ -6,7 +6,8 @@
   "dependencies": {
     "firebase": "^6.1.0",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0",
+    "react-dom": "^16.14.0",
+    "react-firebase-hooks": "^2.2.0",
     "react-firestore": "^0.8.1",
     "react-ga": "^2.5.3",
     "react-instantsearch-dom": "^5.2.3",
