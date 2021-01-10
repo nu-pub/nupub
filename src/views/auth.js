@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase';
+import '../css/header.css'
 
 import {
     Button, Dialog, DialogContent, 
@@ -27,6 +28,13 @@ const Auth = (props) => {
         const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
             setIsSignedIn(!!user)
             setOpen(false)
+            if(user) {
+                const db = firebase.firestore()
+                db.collection('users').doc(user.uid).set({
+                    name: user.displayName,
+                    email: user.email
+                }), {merge: true}
+            }
         })
 
         return () => unregisterAuthObserver();

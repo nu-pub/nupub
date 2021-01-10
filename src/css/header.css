@@ -1,3 +1,14 @@
 .headerBar {
-    height: 50px
+    height: 50px;
+    position: absolute;
+    top: 0;
+    
+}
+
+.authContainer {
+    display: inline;
+}
+
+.profileButton {
+    display: inline;
 }
