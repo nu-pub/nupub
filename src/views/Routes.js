@@ -7,6 +7,7 @@ import BlockPage from "../views/block/blockPage";
 import ChannelPage from "../views/channel/channelPage";
 import ProfilePage from "../views/profile/profilePage";
 import SourcePage from "../views/source/sourcePage";
+import SourceCreatePage from "../views/source/sourceCreate";
 import SourceSearchPage from "../views/source/sourceSearchPage";
 // TODO: remove
 import StylePage from "./components/StylePage";
@@ -20,6 +21,7 @@ const Routes = (props) => (
     <Route path="/user/:userId" component={ProfilePage} />
     <Route path="/channel/:channelId" component={ChannelPage} />
     <Route path="/block/:blockId" component={BlockPage} />
+    <Route path="/source/create" component={SourceCreatePage} />
     <Route path="/source/:sourceId" component={SourcePage} />
     {/* where cid is content id */}
     <Route path="/source/:sourceId/:cid" component={SourcePage} />

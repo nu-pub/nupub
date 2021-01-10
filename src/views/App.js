@@ -1,24 +1,23 @@
+import React from "react";
 import Firebase from "firebase/app";
 import { FirestoreProvider } from "react-firestore";
-import React from "react";
-import { BrowserRouter, Route } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import ErrorBoundary from "./misc/ErrorBoundary";
 import Routes from "./Routes";
 import Header from "./header";
-import firebase from 'firebase'
+import { Box, Container } from "@material-ui/core";
 
 const App = () => {
-
-  const db = firebase.firestore()
-
   return (
     <FirestoreProvider firebase={Firebase}>
       <BrowserRouter>
         <ErrorBoundary>
-          <Header />
-          <div className="container">
-            <Routes />
-          </div>
+          <Container>
+            <Header />
+            <Container fixed maxWidth="sm">
+              <Routes />
+            </Container>
+          </Container>
         </ErrorBoundary>
       </BrowserRouter>
     </FirestoreProvider>
