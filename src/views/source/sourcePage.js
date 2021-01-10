@@ -10,7 +10,7 @@ import styled from "styled-components";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 
@@ -50,9 +50,7 @@ const AddToChannel = ({ path, sourceID }) => {
     setChannelId(event.target.value);
   };
 
-  if (loading || error) {
-    return null;
-  }
+  if (loading || error || user === null) return null;
 
   const [channel, channelLoading, channelError] = useCollection(
     Firebase.firestore().collection(`users/${user.uid}/channels`),
@@ -74,7 +72,7 @@ const AddToChannel = ({ path, sourceID }) => {
         .collection("blocks")
         .doc(path.replace(/\//gi, "-"))
         .set({
-          source: sourceID
+          source: sourceID,
         }),
       Firebase.firestore()
         .doc(path)
@@ -125,7 +123,13 @@ const SourceBlockContainer = styled(Box)`
   }};
 `;
 
-const SourceParagraph = ({ doc, setFocused, focused, handleConnect, path }) => {
+export const SourceParagraph = ({
+  doc,
+  setFocused,
+  focused,
+  handleConnect,
+  path,
+}) => {
   const boxRef = useRef();
 
   useDoubleClick({
@@ -154,7 +158,10 @@ const SourceParagraph = ({ doc, setFocused, focused, handleConnect, path }) => {
             Connect ➡️
           </button> */}
           <Box>
-            <AddToChannel path={`sources/${path}/body/${doc.docid}`} sourceID={path} />
+            <AddToChannel
+              path={`sources/${path}/body/${doc.docid}`}
+              sourceID={path}
+            />
           </Box>
         </Box>
       )}
@@ -187,7 +194,7 @@ const SourcePage = ({
     return <strong>Error: {JSON.stringify(error)}</strong>;
   } else if (loading) {
     // TODO: REPLACE STYLE
-    return <span>Document: Loading...</span>;
+    return <CircularProgress />;
   }
 
   // sort paragraphs by index
@@ -196,10 +203,12 @@ const SourcePage = ({
     .sort((a, b) => (a.index > b.index ? 1 : -1));
 
   return (
-    <Box maxWidth="630px">
+    <Box>
       {DEBUG && <pre>{`focused: ${focused || "n/a"}`}</pre>}
-      <h1>{value.document.data().title}</h1>
-      <h2>{value.document.data().creator}</h2>
+      <h1>
+        {value.document.data().title} / {value.document.data().creator}
+      </h1>
+
       {data
         // get rid of super short paragraphs
         .filter((doc) => doc.body.length > LENGTH_THRESHOLD)
