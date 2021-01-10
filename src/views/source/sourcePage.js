@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Firebase from "firebase/app";
 import Helmet from "react-helmet";
 import Box from "@material-ui/core/Box";
@@ -13,6 +13,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
+import {Link} from "react-router-dom"
+import ChannelLink from './channelLink'
 
 const COLLECTION = "sources";
 
@@ -42,9 +44,14 @@ const useDocumentAndCollection = (id) => {
 
 const AddToChannelContainer = styled(Box)``;
 
-const AddToChannel = ({ path, sourceID }) => {
+const AddToChannel = ({ path, sourceID, paragraphID }) => {
   const [channelId, setChannelId] = React.useState("");
   const [user, loading, error] = useAuthState(Firebase.auth());
+  const [channelList, setChannelList] = useState([])
+  const [recentChannel, setRecentChannel] = useState("")
+  const [recentId, setRecentId] = useState("")
+
+  const db = Firebase.firestore()
 
   const handleChange = (event) => {
     setChannelId(event.target.value);
@@ -55,7 +62,7 @@ const AddToChannel = ({ path, sourceID }) => {
   }
 
   const [channel, channelLoading, channelError] = useCollection(
-    Firebase.firestore().collection(`users/${user.uid}/channels`),
+    db.collection(`users/${user.uid}/channels`),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -68,7 +75,7 @@ const AddToChannel = ({ path, sourceID }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await Promise.all([
-      Firebase.firestore()
+      db
         .collection("channels")
         .doc(channelId)
         .collection("blocks")
@@ -76,13 +83,30 @@ const AddToChannel = ({ path, sourceID }) => {
         .set({
           source: sourceID
         }),
-      Firebase.firestore()
+      db
+        .collection("sources")
+        .doc(sourceID)
+        .collection("paragraphs")
+        .doc(paragraphID)
+        .collection("channels").add({
+          channel: channelId
+        }),
+      db
         .doc(path)
         .update({
           channels: Firebase.firestore.FieldValue.arrayUnion(channelId),
         }),
-    ]);
+    ]).then(function() {
+      setRecentId(channelId)
+    });
+
   };
+
+  const displayRecent = (
+    <Link to={`/channel/${recentId}`}>
+      {recentId}
+    </Link>
+  )
 
   return (
     user && (
@@ -104,6 +128,9 @@ const AddToChannel = ({ path, sourceID }) => {
             <Button type="submit" variant="contained" value="submit">
               Add to channel
             </Button>
+            <div className="belongsTo">
+              {displayRecent}
+            </div>
           </FormControl>
         </form>
       </AddToChannelContainer>
@@ -154,7 +181,7 @@ const SourceParagraph = ({ doc, setFocused, focused, handleConnect, path }) => {
             Connect ➡️
           </button> */}
           <Box>
-            <AddToChannel path={`sources/${path}/body/${doc.docid}`} sourceID={path} />
+            <AddToChannel path={`sources/${path}/body/${doc.docid}`} paragraphID={doc.docid} sourceID={path} />
           </Box>
         </Box>
       )}
