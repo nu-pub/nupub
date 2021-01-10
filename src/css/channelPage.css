@@ -1,0 +1,12 @@
+.blockCard {
+    box-shadow: 1px 1px 1px 1px;
+    margin: 40px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.blockSource {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+}
