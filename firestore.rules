@@ -26,7 +26,7 @@ service cloud.firestore {
 
       match /blocks/{blockId} {
         allow read, write, create: if
-          request.time < timestamp.date(2021,2 8);
+          request.time < timestamp.date(2021,2, 8);
       }
     }
     
